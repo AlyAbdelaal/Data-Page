@@ -9,6 +9,7 @@
 /* Style the buttons that are used to open the tab content */
 .tab button {
   background-color: inherit;
+  font-size: larger;
   float: left;
   border: none;
   outline: none;
@@ -20,18 +21,18 @@
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #ddd;
+  background-color: #45a3c0;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #ccc;
+  background-color: #3864b4;
 }
 
 /* Style the tab content */
 .tabcontent {
   display: none;
-  padding: 6px 12px;
+  padding: 14px 12px;
   border: 1px solid #ccc;
   border-top: none;
 }
@@ -39,8 +40,9 @@
         display: contents;
 }
 .item {
-        
-        padding: 3px;
+        margin-left: 14px;
+        margin-right: 14px;
+        padding: 8px;
         margin-top: 10px;
         
         background-color: azure;
@@ -50,4 +52,6 @@
 a{
         color: black;
         font-style: normal;
+        font-size: x-large;
+        padding-left: 5px;
 }
