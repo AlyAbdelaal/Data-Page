@@ -1,8 +1,8 @@
 /* Style the tab */
 .tab {
   overflow: hidden;
-  border: 1px solid #ccc;
-  background-color: #f1f1f1;
+  border: 1px solid #cab15c;
+  background-color: #e6d7a8;
   margin: 1%;
 }
 
@@ -21,19 +21,19 @@
 
 /* Change background color of buttons on hover */
 .tab button:hover {
-  background-color: #45a3c0;
+  background-color: #cab15c;
 }
 
 /* Create an active/current tablink class */
 .tab button.active {
-  background-color: #3864b4;
+  background-color: #9b790c;
 }
 
 /* Style the tab content */
 .tabcontent {
   display: none;
   padding: 14px 12px;
-  border: 1px solid #ccc;
+  border: 1px solid #f1d378;
   border-top: none;
 }
 #equipment_data{
@@ -45,13 +45,33 @@
         padding: 8px;
         margin-top: 10px;
         
-        background-color: azure;
+        background-color: #fffaec;
         border: black solid 1px;
 
-}
+} 
 a{
-        color: black;
-        font-style: normal;
+        
+        text-decoration: none;
         font-size: x-large;
         padding-left: 5px;
+}
+.part{
+  margin-left: 30px;
+  font-size: medium;
+
+}
+.main{
+  margin-right: 30px;
+}
+td{
+  border: #9b790c solid 2px;
+  margin: 0%;
+  background-color: #f0dea6;
+}
+th{
+  border: #917106 solid 2px;
+  margin: 0%;
+  background-color: #9b790c;
+  color: azure;
+  padding: 12px;
 }
