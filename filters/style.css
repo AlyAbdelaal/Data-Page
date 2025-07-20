@@ -153,3 +153,117 @@ tr:hover {
 .hidden {
     display: none;
 }
+
+/* --- تصميم استجابي (Responsive Design) للشاشات الصغيرة (الجوال والتابلت الرأسي) --- */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px; /* تقليل الهوامش الداخلية */
+        margin: 10px auto; /* تقليل الهوامش الخارجية وجعلها في المنتصف */
+        max-width: 95%; /* استخدام أقصى عرض لملء الشاشة */
+    }
+
+    h1, h2, h3 {
+        font-size: 1.3em; /* تصغير حجم العناوين لتناسب الشاشات الصغيرة */
+        text-align: center; /* توسيط العناوين */
+    }
+
+    /* تعديل عناصر النموذج (inputs, selects, buttons) */
+    .form-group label {
+        display: block; /* لجعل التسمية (label) تظهر فوق حقل الإدخال */
+        margin-bottom: 5px;
+        text-align: right; /* محاذاة النص لليمين للغة العربية */
+    }
+
+    .form-group input,
+    .form-group select,
+    .search-section button {
+        width: 100%; /* جعل حقول الإدخال والأزرار تأخذ عرضها الكامل */
+        box-sizing: border-box; /* لضمان أن العرض يشمل الهوامش والحدود */
+        margin-bottom: 10px; /* إضافة مسافة بين العناصر المتتالية */
+        font-size: 1em; /* تعديل حجم الخط */
+    }
+
+    /* تعديل تنسيق أقسام البحث */
+    .search-section {
+        flex-direction: column; /* إذا كانت الأقسام مصفوفة جنباً إلى جنب، اجعلها تتكدس عمودياً */
+        padding: 15px; /* زيادة المساحة الداخلية */
+    }
+
+    /* --- تعديل طريقة عرض الجدول ليناسب الشاشات الصغيرة --- */
+    .results-table-container table {
+        border: 0; /* إزالة الحدود الخارجية للجدول */
+        width: 100%; /* جعل الجدول يأخذ عرض 100% */
+    }
+
+    .results-table-container table thead {
+        display: none; /* إخفاء رؤوس الأعمدة الأصلية (<thead>) */
+    }
+
+    .results-table-container table,
+    .results-table-container table tbody,
+    .results-table-container table tr,
+    .results-table-container table td {
+        display: block; /* جعل كل عنصر من عناصر الجدول يتصرف ككتلة (block) */
+        width: 100%; /* جعل كل صف وخلية تأخذ عرضها الكامل */
+    }
+
+    .results-table-container table tr {
+        margin-bottom: 15px; /* مسافة بين كل صف (كأنه بطاقة) */
+        border: 1px solid #ddd; /* إضافة حدود لكل صف */
+        padding: 10px; /* مساحة داخلية لكل صف */
+        background-color: #f9f9f9; /* خلفية خفيفة لكل صف */
+        border-radius: 5px; /* حواف دائرية */
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* ظل خفيف */
+    }
+
+    .results-table-container table td {
+        text-align: right; /* محاذاة النص لليمين (للغة العربية) */
+        border-bottom: 1px dotted #ccc; /* خط فاصل منقط بين حقول البيانات في نفس الصف */
+        padding-left: 50%; /* ترك مسافة لـ data-label */
+        position: relative; /* لتحديد موضع data-label */
+        white-space: normal; /* السماح للنص بالانتقال إلى سطر جديد */
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .results-table-container table td:last-child {
+        border-bottom: 0; /* إزالة الخط الفاصل من آخر خلية في الصف */
+    }
+
+    /* عرض رأس العمود كـ data-label */
+    .results-table-container table td::before {
+        content: attr(data-label); /* عرض قيمة data-label */
+        position: absolute;
+        right: 6px; /* وضعها إلى اليمين (لأن الصفحة RTL) */
+        width: 45%; /* إعطاء مساحة لـ data-label */
+        padding-left: 10px;
+        font-weight: bold;
+        text-align: left; /* محاذاة نص الـ label إلى اليسار */
+        color: #555; /* لون مختلف للـ label */
+    }
+
+    .suggestions-box {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+/* تعديلات للطباعة إذا لزم الأمر */
+@media print {
+    .container {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    .data-management-section, .search-section:last-of-type { /* إخفاء أقسام غير ضرورية للطباعة */
+        display: none;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #000;
+        padding: 8px;
+    }
+}
