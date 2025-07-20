@@ -260,6 +260,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         matchingSuggestions.forEach(suggestion => {
             const div = document.createElement('div');
+            div.style.width = '100%'; // تأكيد عرض المقترحات بالكامل    
+            div.style.padding = '10px'; // إضافة padding للمقترحات
+            div.style.cursor = 'pointer'; // تغيير المؤشر عند التمرير فوق المقترحات
+            div.style.borderBottom = '1px solid #5a8b4eff'; // إضافة خط سفلي للمقترحات
+            div.style.backgroundColor = '#b5eec1ff'; // لون خلفية للمقترحات
             div.textContent = suggestion;
             div.addEventListener('click', () => {
                 partNoSearchInput.value = suggestion;
