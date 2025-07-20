@@ -260,18 +260,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
         matchingSuggestions.forEach(suggestion => {
             const div = document.createElement('div');
-            div.style.width = '100%'; // تأكيد عرض المقترحات بالكامل    
-            div.style.padding = '10px'; // إضافة padding للمقترحات
-            div.style.cursor = 'pointer'; // تغيير المؤشر عند التمرير فوق المقترحات
-            div.style.borderBottom = '1px solid #5a8b4eff'; // إضافة خط سفلي للمقترحات
-            div.style.backgroundColor = '#b5eec1ff'; // لون خلفية للمقترحات
-            div.textContent = suggestion;
-            div.addEventListener('click', () => {
+            suggestionsBox.appendChild(div);
+            const div1 = suggestionsBox.lastChild
+            div1.style.width = '98%'; // تأكيد عرض المقترحات بالكامل    
+            div1.style.padding = '10px'; // إضافة padding للمقترحات
+            div1.style.cursor = 'pointer'; // تغيير المؤشر عند التمرير فوق المقترحات
+            div1.style.borderBottom = '1px solid #5a8b4eff'; // إضافة خط سفلي للمقترحات
+            div1.style.backgroundColor = '#b5eec1ff'; // لون خلفية للمقترحات
+            div1.textContent = suggestion;
+            div1.addEventListener('click', () => {
                 partNoSearchInput.value = suggestion;
                 suggestionsBox.innerHTML = ''; // مسح المقترحات عند الاختيار
                 searchByPartNo(suggestion); // البحث مباشرة عند اختيار اقتراح
             });
-            suggestionsBox.appendChild(div);
+            // suggestionsBox.appendChild(div);
         });
     });
 
