@@ -120,10 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // 3. وظيفة عرض النتائج في جدول HTML (تم تعديل الأعمدة المعروضة)
     function displayResults(results) {
-        searchResultsDiv.innerHTML = ''; // مسح النتائج السابقة
+        searchResultsDiv.innerHTML = '';
         resultsCountP.textContent = `عدد النتائج: ${results.length}`;
 
         if (results.length === 0) {
@@ -136,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
 
-        // تعريف رؤوس الأعمدة المراد عرضها فقط
+        // رؤوس الأعمدة المراد عرضها في الجدول
         const headers = [
             'ماركة المعدة', 'الموديل', 'ماركة الفلتر', 'رقم الفلتر', 'كود المخزن'
         ];
@@ -156,9 +154,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         results.forEach(filter => {
             const tr = document.createElement('tr');
-            dataKeys.forEach(key => {
+            dataKeys.forEach((key, index) => {
                 const td = document.createElement('td');
                 td.textContent = filter[key] !== undefined && filter[key] !== null ? filter[key] : '';
+                // هذا هو السطر المهم الذي يضيف data-label
+                td.setAttribute('data-label', headers[index]);
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);
@@ -167,6 +167,53 @@ document.addEventListener('DOMContentLoaded', () => {
         table.appendChild(tbody);
         searchResultsDiv.appendChild(table);
     }
+
+    // 3. وظيفة عرض النتائج في جدول HTML (تم تعديل الأعمدة المعروضة)
+    // function displayResults(results) {
+    //     searchResultsDiv.innerHTML = ''; // مسح النتائج السابقة
+    //     resultsCountP.textContent = `عدد النتائج: ${results.length}`;
+
+    //     if (results.length === 0) {
+    //         searchResultsDiv.innerHTML = '<p class="no-results">لا توجد نتائج مطابقة.</p>';
+    //         return;
+    //     }
+
+    //     const table = document.createElement('table');
+    //     const thead = document.createElement('thead');
+    //     const tbody = document.createElement('tbody');
+    //     const headerRow = document.createElement('tr');
+
+    //     // تعريف رؤوس الأعمدة المراد عرضها فقط
+    //     const headers = [
+    //         'ماركة المعدة', 'الموديل', 'ماركة الفلتر', 'رقم الفلتر', 'كود المخزن'
+    //     ];
+
+    //     // الأعمدة المقابلة في كائن الفلتر (من ملف JSON)
+    //     const dataKeys = [
+    //         'الماركة الرئيسية للمعدة', 'موديل المعدة', 'الماركة (Part No)', 'رقم الفلتر (Part No)', 'كود المخزن'
+    //     ];
+
+    //     headers.forEach(headerText => {
+    //         const th = document.createElement('th');
+    //         th.textContent = headerText;
+    //         headerRow.appendChild(th);
+    //     });
+    //     thead.appendChild(headerRow);
+    //     table.appendChild(thead);
+
+    //     results.forEach(filter => {
+    //         const tr = document.createElement('tr');
+    //         dataKeys.forEach(key => {
+    //             const td = document.createElement('td');
+    //             td.textContent = filter[key] !== undefined && filter[key] !== null ? filter[key] : '';
+    //             tr.appendChild(td);
+    //         });
+    //         tbody.appendChild(tr);
+    //     });
+
+    //     table.appendChild(tbody);
+    //     searchResultsDiv.appendChild(table);
+    // }
 
     // 4. وظيفة البحث بناءً على القوائم المنسدلة الجديدة
     searchByDropdownsBtn.addEventListener('click', () => {
