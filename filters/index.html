@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البحث عن فلاتر المعدات</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>نظام البحث عن فلاتر المعدات</h1>
+
+        <div class="search-section">
+            <h2>بحث حسب ماركة المعدة والموديل ووصف الفلتر</h2>
+            <div class="form-group">
+                <label for="machineBrandSelect">ماركة المعدة الأصلية:</label>
+                <select id="machineBrandSelect">
+                    <option value="">-- اختر الماركة --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="machineModelSelect">موديل المعدة:</label>
+                <select id="machineModelSelect" disabled>
+                    <option value="">-- اختر الموديل --</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="filterDescriptionSelect">وصف الفلتر (اسم الصنف):</label>
+                <select id="filterDescriptionSelect" disabled>
+                    <option value="">-- اختر وصف الفلتر --</option>
+                </select>
+            </div>
+            <button id="searchByDropdownsBtn">بحث</button>
+        </div>
+
+        <div class="search-section">
+            <h2>بحث فوري برقم الفلتر (Part No)</h2>
+            <div class="form-group">
+                <label for="partNoSearchInput">رقم الفلتر:</label>
+                <input type="text" id="partNoSearchInput" placeholder="اكتب رقم الفلتر...">
+                <div id="suggestions" class="suggestions-box"></div>
+            </div>
+        </div>
+
+        <div class="results-section">
+            <h2>النتائج</h2>
+            <p id="resultsCount"></p>
+            <div id="searchResults" class="results-table-container">
+                </div>
+        </div>
+
+        <div class="data-management-section">
+            <h2>إدارة البيانات</h2>
+            <button id="showAddFilterFormBtn">إضافة فلتر جديد</button>
+            <button id="downloadDataBtn" class="download-button">تنزيل البيانات المعدلة (JSON)</button>
+
+            <div id="addFilterForm" class="form-section hidden">
+                <h3>إضافة فلتر جديد</h3>
+                <div class="form-group">
+                    <label for="addFilterNameAr">اسم الصنف (عربي):</label>
+                    <input type="text" id="addFilterNameAr">
+                </div>
+                <div class="form-group">
+                    <label for="addFilterNameEn">اسم الصنف (إنجليزي):</label>
+                    <input type="text" id="addFilterNameEn">
+                </div>
+                <div class="form-group">
+                    <label for="addFilterType">نوع الفلتر:</label>
+                    <input type="text" id="addFilterType" placeholder="مثال: Hydraulic Filter">
+                </div>
+                <div class="form-group">
+                    <label for="addPartNo">رقم الفلتر (Part No):</label>
+                    <input type="text" id="addPartNo" placeholder="مثال: HIFI-FILTER SH60113">
+                </div>
+                <div class="form-group">
+                    <label for="addPartNoBrand">الماركة (Part No):</label>
+                    <input type="text" id="addPartNoBrand" placeholder="مثال: HIFI-FILTER">
+                </div>
+                <div class="form-group">
+                    <label for="addPartNoNumber">رقم الفلتر فقط:</label>
+                    <input type="text" id="addPartNoNumber" placeholder="مثال: SH60113">
+                </div>
+                 <div class="form-group">
+                    <label for="addStoreCode">كود المخزن:</label>
+                    <input type="text" id="addStoreCode">
+                </div>
+                <div class="form-group">
+                    <label for="addMachineBrand">الماركة الرئيسية للمعدة:</label>
+                    <input type="text" id="addMachineBrand" placeholder="مثال: TCM">
+                </div>
+                <div class="form-group">
+                    <label for="addMachineModel">موديل المعدة:</label>
+                    <input type="text" id="addMachineModel" placeholder="مثال: FD30T3Z">
+                </div>
+                <div class="form-group">
+                    <label for="addOriginalMachineDesc">المعدة الأصلية (الوصف):</label>
+                    <input type="text" id="addOriginalMachineDesc" placeholder="مثال: كلارك ديزل 3 طن TCM طراز FD30T3Z">
+                </div>
+                <div class="form-group">
+                    <label for="addGeneralMachineType">نوع المعدة (عام):</label>
+                    <input type="text" id="addGeneralMachineType">
+                </div>
+                <button id="addFilterBtn">إضافة</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
