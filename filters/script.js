@@ -122,6 +122,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
   // 3. وظيفة عرض النتائج في جدول HTML
+  // 3. وظيفة عرض النتائج في جدول HTML (لا تغيير هنا)
+    // لا تزال تعرض الأعمدة المطلوبة: ماركة المعدة, الموديل, ماركة الفلتر, رقم الفلتر, كود المخزن
     function displayResults(results) {
         searchResultsDiv.innerHTML = '';
         resultsCountP.textContent = `عدد النتائج: ${results.length}`;
@@ -136,12 +138,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.createElement('tbody');
         const headerRow = document.createElement('tr');
 
-        // رؤوس الأعمدة المراد عرضها في الجدول
         const headers = [
             'ماركة المعدة', 'الموديل', 'ماركة الفلتر', 'رقم الفلتر', 'كود المخزن'
         ];
 
-        // الأعمدة المقابلة في كائن الفلتر (من ملف JSON)
         const dataKeys = [
             'الماركة الرئيسية للمعدة', 'موديل المعدة', 'الماركة (Part No)', 'رقم الفلتر (Part No)', 'كود المخزن'
         ];
@@ -156,10 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         results.forEach(filter => {
             const tr = document.createElement('tr');
-            dataKeys.forEach(key => { // تم إزالة ", index" هنا
+            dataKeys.forEach(key => {
                 const td = document.createElement('td');
                 td.textContent = filter[key] !== undefined && filter[key] !== null ? filter[key] : '';
-                // تم إزالة السطر التالي: td.setAttribute('data-label', headers[index]);
                 tr.appendChild(td);
             });
             tbody.appendChild(tr);
@@ -168,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
         table.appendChild(tbody);
         searchResultsDiv.appendChild(table);
     }
-
     // 4. وظيفة البحث بناءً على القوائم المنسدلة الجديدة
     searchByDropdownsBtn.addEventListener('click', () => {
         const selectedMachineBrand = machineBrandSelect.value;
