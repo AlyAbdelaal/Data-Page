@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البحث عن المعدات</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
+            padding: 0;
+            direction: rtl;
+            text-align: right;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .filter-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .filter-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .filter-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            font-size: 1rem;
+        }
+
+        #equipmentIdListContainer {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fcfcfc;
+        }
+        #equipmentIdList {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            
+            max-height: 120px; /* ارتفاع تقريبي لـ 3 أسطر */
+            overflow-y: auto; /* لإنشاء شريط التمرير العمودي */
+            padding-right: 10px; /* مسافة للابتعاد عن شريط التمرير */
+        }
+        .equipment-id-item {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .equipment-id-item:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .equipment-id-item.selected {
+            background-color: #28a745;
+            border: 2px solid #1e7e34;
+            transform: scale(1.05);
+        }
+        .no-filtered-ids {
+            text-align: center;
+            color: #888;
+            padding: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>البحث عن بيانات المعدات</h1>
+
+        <div class="filter-section">
+            <div class="filter-group">
+                <label for="equipmentTypeSelect">نوع المعدة:</label>
+                <select id="equipmentTypeSelect">
+                    <option value="">كل الأنواع</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="modelSelect">الموديل:</label>
+                <select id="modelSelect" disabled>
+                    <option value="">كل الموديلات</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="manufactureYearSelect">سنة الصنع:</label>
+                <select id="manufactureYearSelect" disabled>
+                    <option value="">كل السنوات</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="equipmentIdListContainer">
+            <p class="no-filtered-ids" id="initialIdMessage">يتم تحميل البيانات...</p>
+            <div id="equipmentIdList">
+                </div>
+        </div>
+
+        <div id="equipmentDetails">
+            <p class="no-data">انقر على رقم معدة لعرض بياناتها.</p>
+        </div>
+    </div>
+
+    <script>
+        let allEquipmentData = [];
+        let currentSelectedEquipmentId = null;
+
+        const equipmentTypeSelect = document.getElementById('equipmentTypeSelect');
+        const modelSelect = document.getElementById('modelSelect');
+        const manufactureYearSelect = document.getElementById('manufactureYearSelect');
+        const equipmentIdList = document.getElementById('equipmentIdList');
+        const initialIdMessage = document.getElementById('initialIdMessage');
+        const equipmentDetailsDiv = document.getElementById('equipmentDetails');
+
+        // وظيفة لجلب البيانات من ملف JSON
+        async function fetchEquipmentData() {
+            try {
+                const response = await fetch('master_equipment_data.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                allEquipmentData = await response.json();
+                populateEquipmentTypes();
+                displayFilteredEquipmentIds(); // عرض كل المعدات عند التحميل الأولي
+            } catch (error) {
+                console.error("خطأ في جلب بيانات المعدات:", error);
+                equipmentDetailsDiv.innerHTML = '<p class="no-data" style="color: red;">حدث خطأ في تحميل البيانات. يرجى التأكد من وجود ملف master_equipment_data.json في نفس المجلد.</p>';
+                initialIdMessage.textContent = 'حدث خطأ في تحميل البيانات.';
+            }
+        }
+
+        // وظيفة لملء قائمة "نوع المعدة"
+        function populateEquipmentTypes() {
+            // تغيير نص الخيار الافتراضي
+            equipmentTypeSelect.querySelector('option').textContent = 'كل الأنواع';
+
+            const types = [...new Set(allEquipmentData.map(item => item.equipment_type))].filter(Boolean);
+            types.sort();
+            types.forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                equipmentTypeSelect.appendChild(option);
+            });
+            equipmentTypeSelect.disabled = false;
+        }
+
+        // وظيفة لملء قائمة "الموديل" بناءً على نوع المعدة المحدد
+        function populateModels(selectedType) {
+            modelSelect.innerHTML = '<option value="">كل الموديلات</option>'; // تغيير نص الخيار الافتراضي
+            manufactureYearSelect.innerHTML = '<option value="">كل السنوات</option>'; // تغيير نص الخيار الافتراضي
+
+            modelSelect.disabled = true;
+            manufactureYearSelect.disabled = true;
+            
+            equipmentDetailsDiv.innerHTML = '<p class="no-data">انقر على رقم معدة لعرض بياناتها.</p>';
+            currentSelectedEquipmentId = null;
+
+            if (selectedType) {
+                const filteredByBrand = allEquipmentData.filter(item => item.equipment_type === selectedType);
+                const models = [...new Set(filteredByBrand.map(item => item.equipment_model))].filter(value =>
+                    value !== null && value !== undefined &&
+                    (typeof value !== 'string' || (value.trim() !== '' && value.trim().toLowerCase() !== 'nan'))
+                );
+
+                if (models.length === 0) {
+                    populateManufactureYears(selectedType, null); // تخطي الموديل مباشرة إلى سنة الصنع
+                    const noModelOption = document.createElement('option');
+                    noModelOption.value = "";
+                    noModelOption.textContent = "لا يوجد موديل متاح";
+                    noModelOption.disabled = true;
+                    modelSelect.appendChild(noModelOption);
+                } else {
+                    models.sort();
+                    models.forEach(model => {
+                        const option = document.createElement('option');
+                        option.value = model;
+                        option.textContent = model;
+                        modelSelect.appendChild(option);
+                    });
+                    modelSelect.disabled = false;
+                }
+            }
+            displayFilteredEquipmentIds(); // تحديث أرقام المعدات بعد كل تغيير
+        }
+
+        // وظيفة لملء قائمة "سنة الصنع" بناءً على نوع المعدة والموديل المحددين
+        function populateManufactureYears(selectedType, selectedModel) {
+            manufactureYearSelect.innerHTML = '<option value="">كل السنوات</option>'; // تغيير نص الخيار الافتراضي
+
+            manufactureYearSelect.disabled = true;
+            
+            equipmentDetailsDiv.innerHTML = '<p class="no-data">انقر على رقم معدة لعرض بياناتها.</p>';
+            currentSelectedEquipmentId = null;
+
+            if (selectedType) {
+                let filteredDataForYearsDropdown;
+                if (selectedModel) {
+                    // إذا تم اختيار موديل محدد، قم بالفلترة بناءً عليه لملء قائمة السنوات
+                    filteredDataForYearsDropdown = allEquipmentData.filter(item =>
+                        item.equipment_type === selectedType && item.equipment_model === selectedModel
+                    );
+                } else {
+                    // إذا لم يتم اختيار موديل (اختر الموديل أو لا يوجد موديل)،
+                    // فاعرض كل السنوات المتاحة لنوع المعدة المحدد (بغض النظر عن الموديل)
+                    filteredDataForYearsDropdown = allEquipmentData.filter(item =>
+                        item.equipment_type === selectedType
+                    );
+                }
+
+                const years = [...new Set(filteredDataForYearsDropdown.map(item => item.manufacture_year))].filter(Boolean);
+                years.sort((a, b) => b - a);
+                years.forEach(year => {
+                    const option = document.createElement('option');
+                    option.value = year;
+                    option.textContent = year;
+                    manufactureYearSelect.appendChild(option);
+                });
+                manufactureYearSelect.disabled = false;
+            }
+            displayFilteredEquipmentIds(); // تحديث أرقام المعدات بعد كل تغيير
+        }
+
+        // الدالة الجديدة لعرض أرقام المعدات المفلترة
+        function displayFilteredEquipmentIds() {
+            equipmentIdList.innerHTML = ''; // مسح الأرقام القديمة
+            initialIdMessage.classList.add('hidden'); // إخفاء الرسالة الأولية (سنعرض رسالة جديدة إذا لم تكن هناك نتائج)
+
+            const selectedType = equipmentTypeSelect.value;
+            const selectedModel = modelSelect.value;
+            const selectedYear = manufactureYearSelect.value;
+
+            let filteredItems = allEquipmentData.filter(item => {
+                // الفلترة حسب نوع المعدة: إذا لم يتم اختيار نوع (selectedType فارغ)، فجميع الأنواع تطابق. وإلا، يجب أن يطابق النوع المحدد.
+                let matchesType = !selectedType || item.equipment_type === selectedType;
+                
+                // الفلترة حسب الموديل: إذا لم يتم اختيار موديل (selectedModel فارغ)، فجميع الموديلات تطابق. وإلا، يجب أن يطابق الموديل المحدد.
+                // يجب أن نأخذ في الاعتبار هنا القيم الفارغة/nan في البيانات للموديل، ولكن بما أننا الآن نريد "كل الموديلات" عندما لا يحدد المستخدم، فإننا نقبلها جميعًا.
+                let matchesModel = !selectedModel || item.equipment_model === selectedModel;
+
+                // الفلترة حسب سنة الصنع: إذا لم يتم اختيار سنة (selectedYear فارغ)، فجميع السنوات تطابق. وإلا، يجب أن تطابق السنة المحددة.
+                let matchesYear = !selectedYear || item.manufacture_year === parseInt(selectedYear);
+                
+                return matchesType && matchesModel && matchesYear;
+            });
+
+            // الحصول على أرقام الترقيم الداخلي الفريدة وفرزها
+            const uniqueIds = [...new Set(filteredItems.map(item => item.internal_id))].filter(Boolean).sort((a, b) => a - b);
+
+            if (uniqueIds.length === 0) {
+                initialIdMessage.classList.remove('hidden');
+                initialIdMessage.textContent = 'لا توجد معدات مطابقة لهذه الفلاتر.';
+            } else {
+                initialIdMessage.classList.add('hidden');
+                uniqueIds.forEach(id => {
+                    const idDiv = document.createElement('div');
+                    idDiv.classList.add('equipment-id-item');
+                    if (id === currentSelectedEquipmentId) {
+                        idDiv.classList.add('selected');
+                    }
+                    idDiv.textContent = id;
+                    idDiv.dataset.internalId = id;
+                    idDiv.addEventListener('click', () => {
+                        if (currentSelectedEquipmentId) {
+                            const prevSelected = document.querySelector(`.equipment-id-item[data-internal-id="${currentSelectedEquipmentId}"]`);
+                            if (prevSelected) {
+                                prevSelected.classList.remove('selected');
+                            }
+                        }
+                        currentSelectedEquipmentId = id;
+                        idDiv.classList.add('selected');
+                        displayEquipmentDetails(id);
+                    });
+                    equipmentIdList.appendChild(idDiv);
+                });
+            }
+        }
+
+        // وظيفة لعرض تفاصيل المعدة المحددة (لم تتغير عن السابق)
+        function displayEquipmentDetails(selectedId) {
+            equipmentDetailsDiv.innerHTML = '';
+            if (!selectedId) {
+                equipmentDetailsDiv.innerHTML = '<p class="no-data">انقر على رقم معدة لعرض بياناتها.</p>';
+                return;
+            }
+
+            const equipment = allEquipmentData.find(item => item.internal_id === parseInt(selectedId));
+
+            if (equipment) {
+                const card = document.createElement('div');
+                card.classList.add('equipment-card');
+                card.innerHTML = `<h2>بيانات المعدة رقم: ${equipment.internal_id}</h2>`;
+
+                const arabicColumnNames = {
+                    'internal_id': 'الترقيم الداخلي',
+                    'chassis_number': 'رقم الشاسيه',
+                    'engine_number': 'رقم المحرك',
+                    'service_entry_date': 'تاريخ دخول الخدمة',
+                    'manufacture_year': 'سنة الصنع',
+                    'equipment_model': 'موديل المعدة',
+                    'manufacturer': 'المصنع',
+                    'tire_size': 'مقاس الكاوتش',
+                    'batteries': 'البطاريات',
+                    'engine_model': 'موديل المحرك',
+                    'gearbox_model': 'موديل الجيربوكس',
+                    'front_axle_model': 'موديل الاكس الامامي',
+                    'rear_axle_model': 'موديل الاكس الخلفي',
+                    'spreader_model': 'موديل الاسبريدر',
+                    'axle_model': 'موديل الاكس',
+                    'axle_model_trailers': 'موديل الاكسات',
+                    'trailer_length': 'طول المقطورة',
+                    'fuel_tank_capacity': 'سعة خزان الوقود',
+                    'differential_and_axle_oil': 'زيت كرونة و الاكسات',
+                    'gearbox_oil_type_tractors': 'زيت صندوق التروس',
+                    'equipment_type': 'نوع المعدة',
+                    'engine_oil_type': 'نوع زيت المحرك',
+                    'engine_oil_quantity': 'كمية زيت المحرك',
+                    'gearbox_oil_type': 'نوع زيت الجيربوكس',
+                    'gearbox_oil_quantity': 'كمية زيت الجيربوكس',
+                    'hydraulic_oil_type': 'نوع زيت الهيدروليك',
+                    'hydraulic_oil_quantity': 'كمية زيت الهيدروليك',
+                    'differential_oil_type': 'نوع زيت الكرونة',
+                    'differential_oil_quantity': 'كمية زيت الكرونة',
+                    'brake_cooling_oil_type': 'نوع زيت تبريد الفرامل',
+                    'brake_cooling_oil_quantity': 'كمية زيت تبريد الفرامل',
+                    'rotation_motor_oil_type': 'نوع زيت موتور الدوران',
+                    'rotation_motor_oil_quantity': 'كمية زيت موتور الدوران',
+                };
+
+                for (const key in equipment) {
+                    let value = equipment[key];
+                    if (value === null || value === undefined ||
+                        (typeof value === 'string' && (value.trim() === '' || value.trim().toLowerCase() === 'nan'))) {
+                        continue;
+                    }
+                    
+                    const displayKey = arabicColumnNames[key] || key.replace(/_/g, ' ');
+
+                    if (key.includes('date')) {
+                        try {
+                            const dateObj = new Date(value);
+                            if (!isNaN(dateObj.getTime())) {
+                                value = dateObj.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+                            }
+                        } catch (e) {
+                            // Keep original value if date parsing fails
+                        }
+                    }
+
+                    const p = document.createElement('p');
+                    p.innerHTML = `<strong>${displayKey}:</strong> ${value}`;
+                    card.appendChild(p);
+                }
+                equipmentDetailsDiv.appendChild(card);
+            } else {
+                equipmentDetailsDiv.innerHTML = '<p class="no-data">لم يتم العثور على بيانات لهذه المعدة.</p>';
+            }
+        }
+
+        // إضافة مستمعي الأحداث لتحديث القوائم المنسدلة و أرقام المعدات
+        equipmentTypeSelect.addEventListener('change', (event) => {
+            const selectedType = event.target.value;
+            populateModels(selectedType);
+        });
+
+        modelSelect.addEventListener('change', (event) => {
+            const selectedType = equipmentTypeSelect.value;
+            const selectedModel = event.target.value;
+            populateManufactureYears(selectedType, selectedModel);
+        });
+
+        manufactureYearSelect.addEventListener('change', (event) => {
+            displayFilteredEquipmentIds();
+            equipmentDetailsDiv.innerHTML = '<p class="no-data">انقر على رقم معدة لعرض بياناتها.</p>';
+            currentSelectedEquipmentId = null;
+        });
+
+        fetchEquipmentData();
+    </script>
+</body>
+</html>
