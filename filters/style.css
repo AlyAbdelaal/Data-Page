@@ -1,15 +1,14 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
     margin: 0;
     padding: 20px;
-    background-color: #f4f4f4;
-    color: #333;
-    direction: rtl; /* للغة العربية */
-    text-align: right; /* للغة العربية */
+    direction: rtl; /* لضمان دعم اللغة العربية بشكل صحيح */
+    text-align: right; /* محاذاة النص لليمين افتراضيا */
 }
 
 .container {
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 20px auto;
     background-color: #fff;
     padding: 30px;
@@ -18,37 +17,39 @@ body {
 }
 
 h1, h2, h3 {
-    color: #0056b3;
+    color: #333;
     text-align: center;
     margin-bottom: 20px;
 }
 
-.search-section, .results-section, .data-management-section, .form-section {
+.search-section, .data-management-section, .add-filter-form {
     background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
     padding: 20px;
-    margin-bottom: 25px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
 }
 
 .form-group {
     margin-bottom: 15px;
+    position: relative; /* مهم جداً: هذا يحدد العنصر الأب للموضع المطلق */
 }
 
-label {
+.form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
     font-weight: bold;
+    color: #555;
 }
 
-input[type="text"], select {
-    width: calc(100% - 22px); /* لتجنب التجاوز بسبب البادينغ */
+.form-group input[type="text"],
+.form-group select {
+    width: calc(100% - 20px); /* Adjust width to account for padding */
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    font-size: 16px;
-    box-sizing: border-box; /* لضمان أن العرض يشمل البادينغ والحدود */
+    font-size: 1em;
+    direction: rtl; /* لضمان إدخال النص العربي بشكل صحيح */
 }
 
 button {
@@ -58,9 +59,9 @@ button {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1em;
     margin-top: 10px;
-    margin-left: 10px; /* للغة العربية */
+    transition: background-color 0.3s ease;
 }
 
 button:hover {
@@ -72,6 +73,84 @@ button:disabled {
     cursor: not-allowed;
 }
 
+.results-section {
+    margin-top: 30px;
+}
+
+.results-table-container {
+    overflow-x: auto; /* السماح بالتمرير الأفقي للجدول إذا كان أوسع من الشاشة */
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #fff;
+    padding: 5px; /* مسافة داخلية */
+}
+
+.results-table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    min-width: 600px; /* تحديد عرض أدنى للجدول لضمان التمرير الأفقي على الشاشات الصغيرة */
+}
+
+.results-table-container th,
+.results-table-container td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: right; /* محاذاة النص لليمين */
+}
+
+.results-table-container th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.results-table-container tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.no-results {
+    text-align: center;
+    color: #666;
+    padding: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Suggestions box for Part No search */
+.suggestions-box {
+    position: absolute;
+    top: 100%; /* تظهر أسفل حقل الإدخال */
+    right: 0;   /* مهم: محاذاة لليمين */
+    left: 0;    /* مهم: جعلها تمتد إلى اليسار أيضاً لتعريف العرض */
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 4px;
+    list-style: none; /* إزالة ترقيم القائمة */
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box; /* لضمان تضمين الهامش والحدود في العرض الكلي */
+}
+
+.suggestions-box li {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.suggestions-box li:last-child {
+    border-bottom: none;
+}
+
+.suggestions-box li:hover {
+    background-color: #f0f0f0;
+}
+
 .download-button {
     background-color: #28a745;
 }
@@ -80,171 +159,59 @@ button:disabled {
     background-color: #218838;
 }
 
-.results-table-container {
-    max-height: 400px; /* لتحديد أقصى ارتفاع لجدول النتائج */
-    overflow-y: auto; /* لجعل الجدول قابلاً للتمرير إذا تجاوز الارتفاع */
-    border: 1px solid #eee;
-    border-radius: 5px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-}
-
-table, th, td {
-    border: 1px solid #ddd;
-}
-
-th, td {
-    padding: 10px;
-    text-align: right;
-    font-size: 14px;
-}
-
-th {
-    background-color: #007bff;
-    color: white;
-    position: sticky; /* لجعل رأس الجدول ثابتًا عند التمرير */
-    top: 0;
-    z-index: 1;
-}
-
-tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-tr:hover {
-    background-color: #e2e2e2;
-}
-
-.no-results {
-    text-align: center;
-    padding: 20px;
-    color: #666;
-}
-
-.suggestions-box {
-    border: 1px solid #ddd;
-    max-height: 150px;
-    overflow-y: auto;
-    background-color: white;
-    position: absolute; /* أو relative حسب التخطيط */
-    width: calc(100% - 40px); /* يتوافق مع عرض input */
-    z-index: 100;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-
-.suggestions-box div {
-    padding: 8px 10px;
-    cursor: pointer;
-    border-bottom: 1px solid #eee;
-}
-
-.suggestions-box div:last-child {
-    border-bottom: none;
-}
-
-.suggestions-box div:hover {
-    background-color: #f0f0f0;
-}
-
-.hidden {
-    display: none;
-}
-
 /* --- تصميم استجابي (Responsive Design) للشاشات الصغيرة (الجوال والتابلت الرأسي) --- */
 @media (max-width: 768px) {
     .container {
-        padding: 10px; /* تقليل الهوامش الداخلية */
-        margin: 10px auto; /* تقليل الهوامش الخارجية وجعلها في المنتصف */
-        max-width: 95%; /* استخدام أقصى عرض لملء الشاشة */
+        padding: 10px;
+        margin: 10px auto;
+        max-width: 95%;
     }
 
     h1, h2, h3 {
-        font-size: 1.3em; /* تصغير حجم العناوين لتناسب الشاشات الصغيرة */
-        text-align: center; /* توسيط العناوين */
+        font-size: 1.3em;
+        text-align: center;
     }
 
     /* تعديل عناصر النموذج (inputs, selects, buttons) */
     .form-group label {
-        display: block; /* لجعل التسمية (label) تظهر فوق حقل الإدخال */
+        display: block;
         margin-bottom: 5px;
-        text-align: right; /* محاذاة النص لليمين للغة العربية */
+        text-align: right;
     }
 
-    .form-group input,
+    .form-group input[type="text"],
     .form-group select,
     .search-section button {
         width: 100%; /* جعل حقول الإدخال والأزرار تأخذ عرضها الكامل */
-        box-sizing: border-box; /* لضمان أن العرض يشمل الهوامش والحدود */
-        margin-bottom: 10px; /* إضافة مسافة بين العناصر المتتالية */
-        font-size: 1em; /* تعديل حجم الخط */
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        font-size: 1em;
     }
 
     /* تعديل تنسيق أقسام البحث */
     .search-section {
-        flex-direction: column; /* إذا كانت الأقسام مصفوفة جنباً إلى جنب، اجعلها تتكدس عمودياً */
-        padding: 15px; /* زيادة المساحة الداخلية */
+        flex-direction: column;
+        padding: 15px;
     }
 
-    /* --- تعديل طريقة عرض الجدول ليناسب الشاشات الصغيرة --- */
+    /* هذا الجزء خاص بتأكيد سلوك الجدول القديم (مع التمرير الأفقي) */
+    .results-table-container {
+        overflow-x: auto; /* السماح بالتمرير الأفقي على الشاشات الصغيرة */
+        -webkit-overflow-scrolling: touch; /* لتحسين التمرير على أجهزة iOS */
+    }
+
+    /* لا نضع هنا أي قواعد 'display: block' أو 'display: flex' لـ table, tr, td, th */
+    /* الجدول سيتصرف كجدول عادي مع التمرير الأفقي عند الحاجة */
     .results-table-container table {
-        border: 0; /* إزالة الحدود الخارجية للجدول */
-        width: 100%; /* جعل الجدول يأخذ عرض 100% */
+        width: 100%; /* تأكيد أن الجدول يأخذ 100% من عرض حاويته (التي ستسمح بالتمرير) */
+        min-width: 500px; /* يمكن تعديل هذا لضمان عرض كافٍ للجدول قبل التمرير */
     }
 
-    .results-table-container table thead {
-        display: none; /* إخفاء رؤوس الأعمدة الأصلية (<thead>) */
-    }
-
-    .results-table-container table,
-    .results-table-container table tbody,
-    .results-table-container table tr,
-    .results-table-container table td {
-        display: block; /* جعل كل عنصر من عناصر الجدول يتصرف ككتلة (block) */
-        width: 100%; /* جعل كل صف وخلية تأخذ عرضها الكامل */
-    }
-
-    .results-table-container table tr {
-        margin-bottom: 15px; /* مسافة بين كل صف (كأنه بطاقة) */
-        border: 1px solid #ddd; /* إضافة حدود لكل صف */
-        padding: 10px; /* مساحة داخلية لكل صف */
-        background-color: #f9f9f9; /* خلفية خفيفة لكل صف */
-        border-radius: 5px; /* حواف دائرية */
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* ظل خفيف */
-    }
-
-    .results-table-container table td {
-        text-align: right; /* محاذاة النص لليمين (للغة العربية) */
-        border-bottom: 1px dotted #ccc; /* خط فاصل منقط بين حقول البيانات في نفس الصف */
-        padding-left: 50%; /* ترك مسافة لـ data-label */
-        position: relative; /* لتحديد موضع data-label */
-        white-space: normal; /* السماح للنص بالانتقال إلى سطر جديد */
-        padding-top: 5px;
-        padding-bottom: 5px;
-    }
-
-    .results-table-container table td:last-child {
-        border-bottom: 0; /* إزالة الخط الفاصل من آخر خلية في الصف */
-    }
-
-    /* عرض رأس العمود كـ data-label */
-    .results-table-container table td::before {
-        content: attr(data-label); /* عرض قيمة data-label */
-        position: absolute;
-        right: 6px; /* وضعها إلى اليمين (لأن الصفحة RTL) */
-        width: 45%; /* إعطاء مساحة لـ data-label */
-        padding-left: 10px;
-        font-weight: bold;
-        text-align: left; /* محاذاة نص الـ label إلى اليسار */
-        color: #555; /* لون مختلف للـ label */
-    }
-
+    /* إصلاح عرض الـ suggestions-box في الموبايل */
     .suggestions-box {
-        width: 100%;
-        box-sizing: border-box;
+        right: 0; /* تأكيد المحاذاة لليمين */
+        left: 0;  /* تأكيد الامتداد لليسار */
+        width: auto; /* السماح له بالحساب التلقائي بناءً على right/left */
     }
 }
 
